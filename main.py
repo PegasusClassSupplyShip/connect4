@@ -28,6 +28,33 @@ def makeMove(playerTurn,inputNum,board):
         deepestIndex-=1
     return board
 
+def validateMove(board,inputNum):
+    horizontalBoardLength=len(board[0])
+    rejectMesseage="no problem"
+    if(type(inputNum)!=type(1)):
+        #check if inpput is an integer
+        rejectMesseage="please enter an integer"
+    elif(inputNum<0 or inputNum>horizontalBoardLength-1):
+         #check if input is inside board
+        rejectMesseage="input is outside the board"
+    else:
+        #check if the selected board is full or not
+        rejectMesseage="the selected row is full"
+        for i in board:
+            if(i[inputNum]==" "):
+                rejectMesseage="no problem"
+                break;
+    return rejectMesseage
+
+def checkIfGameIsComplete(board):
+    gameEnded=True
+    #check if there are any " " inside the board
+    for row in board:
+        if (" " in row):
+            gameEnded=False
+            break
+    return gameEnded
+    
 def main():
     board=setUpBoard()
     print("TURN:0")
@@ -37,8 +64,13 @@ def main():
     playerTurn="R"
     numberOfTurnsPlayed=0
     while(gameEnded==False):
-        #getInPut
-        inputNum=eval(input(playerTurn + " player, please enter input: "))
+        #getInPut / validate move
+        rejectMessage=""
+        while(rejectMessage!="no problem"):
+            print(rejectMessage)
+            inputNum=eval(input(playerTurn + " player, please enter input: "))
+            rejectMessage=validateMove(board,inputNum)
+            
         #makeMove
         board=makeMove(playerTurn,inputNum,board)
         #printBoard
@@ -50,6 +82,9 @@ def main():
             playerTurn="Y"
         else:
             playerTurn="R"
-            
+        #check if game have ended
+        gameEnded=checkIfGameIsComplete(board)
+        if(gameEnded):
+            print("The game have ended")
 if(__name__=="__main__"):
     main()
