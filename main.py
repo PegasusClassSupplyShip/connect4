@@ -198,15 +198,6 @@ class Connect4:
             player= "YELLOW"
         return player
 
-    def whoWonTheGame():
-        #returns false if no one have won
-        if(self.gameWonBy=="R"):
-            player= "RED"
-        elif(self.gameWonBy=="Y"):
-            player= "YELLOW"
-        else:
-            player=False
-        return player
     
 def main():
     myConnect4=Connect4()
