@@ -1,5 +1,4 @@
 class Connect4:
-    
     def __init__(self,horiLength=7,vertLength=6):
         self.horiLength=horiLength
         self.vertLength=vertLength
@@ -10,6 +9,7 @@ class Connect4:
         self.legalMoveRejectMessage="no problem"
         self.lastInputWasLegal=False
         self.gameEnded=self.checkIfGameIsComplete()
+        self.gameWonBy=False
         self.numberOfTurnsPlayed=0
 
         print("TURN:0")
@@ -52,19 +52,26 @@ class Connect4:
                 deepestIndex-=1
             self.board=board
             #switch the player who is about to make a move
-            self.switchPlaterTurn()
+            self.switchPlayerTurn()
+
+            #print end result
+            print("TURN:"+str(self.numberOfTurnsPlayed))
+            self.printBoard()
+            self.numberOfTurnsPlayed+=1
+
+            #check if the game have ended
+            if(self.checkIfGameIsComplete()):
+                print("The game have ended")
+                gameWonBy=self.checkIfPlayerWon()
+                if(gameWonBy!=False):
+                    print("The game was won by "+gameWonBy)
+                    self.gameWonBy=gameWonBy
+                else:
+                    print("The game was a draw")
         else:
             #move is illegal
             print(rejectMessage)
             return rejectMessage
-
-        self.checkIfGameIsComplete();
-        if(self.checkIfGameIsComplete()):
-            print("The game have ended")
-
-        #print end result
-        print("TURN:"+str(self.numberOfTurnsPlayed))
-        self.printBoard()
         
     def validateMove(self,inputNum):
         board=self.board
@@ -88,7 +95,7 @@ class Connect4:
         self.lastInputWasLegal = (rejectMessage=="no problem")
         return rejectMessage
 
-    def switchPlaterTurn(self):
+    def switchPlayerTurn(self):
         playerTurn=self.playerTurn
         if (playerTurn=="R"):
             playerTurn="Y"
@@ -96,6 +103,71 @@ class Connect4:
             playerTurn="R"
         self.playerTurn=playerTurn
 
+    def checkIfPlayerWon(self):
+        stack=["","","",""]
+        #if game is not won by anywon then false is returend
+        winner=False
+        #check for horizontal victory
+        for i in self.board:
+            for j in range(len(i)):
+                stack[j%4]=i[j]
+                if(stack[0]==stack[1]==stack[2]==stack[3] and stack[0]!=" "):
+                    winner=stack[0]
+                    return winner
+        stack=["","","",""]
+        #check for vertical victory
+        for i in range(len(self.board[0])):
+            for j in range(len(self.board)):
+                stack[j%4]=self.board[j][i]
+                if(stack[0]==stack[1]==stack[2]==stack[3] and stack[0]!=" "):
+                    winner=stack[0]
+                    return winner
+        stack=["","","",""]
+        #check for diagonal victory [top left to bottom right]
+        for y in range(len(self.board)):
+            stack=["","","",""]
+            x=0 
+            while(x <len(self.board[0]) and y<len(self.board)):
+                stack[x%4]=self.board[y][x]
+                if(stack[0]==stack[1]==stack[2]==stack[3] and stack[0]!=" "):
+                    winner=stack[0]
+                    return winner
+                x+=1
+                y+=1
+        for x in range(len(self.board[0])):
+            stack=["","","",""]
+            y=0
+            while(x <len(self.board[0]) and y<len(self.board)):
+                stack[x%4]=self.board[y][x]
+                if(stack[0]==stack[1]==stack[2]==stack[3] and stack[0]!=" "):
+                    winner=stack[0]
+                    return winner
+                x+=1
+                y+=1
+        #check for diagonal victory [bottom left to top right]
+        for y in range(len(self.board)):
+            stack=["","","",""]
+            x=0 
+            while(x < len(self.board[0]) and y>=0):
+                stack[x%4]=self.board[y][x]
+                if(stack[0]==stack[1]==stack[2]==stack[3] and stack[0]!=" "):
+                    winner=stack[0]
+                    return winner
+                x+=1
+                y-=1
+        for x in range(len(self.board[0])):
+            stack=["","","",""]
+            y=len(self.board)-1
+            while(x <len(self.board[0]) and y>=0):
+                stack[x%4]=self.board[y][x]
+                if(stack[0]==stack[1]==stack[2]==stack[3] and stack[0]!=" "):
+                    winner=stack[0]
+                    return winner
+                x+=1
+                y-=1
+        #game not won by anyone if it return false
+        return False
+    
     def checkIfGameIsComplete(self):
         board=self.board
         gameEnded=True
@@ -104,6 +176,10 @@ class Connect4:
             if (" " in row):
                 gameEnded=False
                 break
+        #check if someone won the game
+        if(self.checkIfPlayerWon()!=False):
+            gameEnded=True
+            
         self.gameEnded = gameEnded
         return(gameEnded)
 
@@ -120,6 +196,16 @@ class Connect4:
             player= "RED"
         else:
             player= "YELLOW"
+        return player
+
+    def whoWonTheGame():
+        #returns false if no one have won
+        if(self.gameWonBy=="R"):
+            player= "RED"
+        elif(self.gameWonBy=="Y"):
+            player= "YELLOW"
+        else:
+            player=False
         return player
     
 def main():
